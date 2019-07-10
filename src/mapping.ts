@@ -56,7 +56,6 @@ function initPools(block: BigInt, timestamp: BigInt): void {
       pool.symbol = hardcodedTokens[i].symbol
       pool.available = BigDecimal.fromString('0')
       pool.reserve = BigDecimal.fromString('0')
-      pool.active = BigDecimal.fromString('0')
       pool.profit = BigDecimal.fromString('0')
       pool.loss = BigDecimal.fromString('0')
       pool.save()
@@ -69,7 +68,6 @@ function createPool(pool: Pool, latest: Pool): void {
 
   pool.available = latest.available
   pool.reserve = latest.reserve
-  pool.active = latest.active
   pool.profit = latest.profit
   pool.loss = latest.loss
 

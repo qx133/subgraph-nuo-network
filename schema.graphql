@@ -14,7 +14,6 @@ type Pool @entity {
   symbol: String!
   available: BigDecimal!
   reserve: BigDecimal!
-  active: BigDecimal!
   profit: BigDecimal!
   loss: BigDecimal!
 }
