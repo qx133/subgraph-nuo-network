@@ -1,5 +1,5 @@
 type Account @entity {
-  id: ID!
+  id: ID! # address of created account
   txid: String!
   timestamp: BigInt!
   user: String!
@@ -8,19 +8,10 @@ type Account @entity {
 }
 
 type Pool @entity {
-  id: ID!
+  id: ID! # symbol-blockNumber
   block: BigInt!
   timestamp: BigInt!
   symbol: String!
-  lendCreated: Int!
-  lendCancelled: Int!
-  borrowCreated: Int!
-  borrowRepaid: Int!
-  borrowDefaulted: Int!
-  marginCreated: Int!
-  marginSettled: Int!
-  amountDeposit: BigDecimal!
-  amountWithdraw: BigDecimal!
   available: BigDecimal!
   reserve: BigDecimal!
   active: BigDecimal!
@@ -29,7 +20,7 @@ type Pool @entity {
 }
 
 type LendOrder @entity {
-  id: ID!
+  id: ID! # order hash
   txid: String!
   timestamp: BigInt!
   account: String!
@@ -41,7 +32,7 @@ type LendOrder @entity {
 }
 
 type Lock @entity {
-  id: ID!
+  id: ID! # txid-logIndex
   txid: String!
   timestamp: BigInt!
   token: String!
@@ -53,7 +44,7 @@ type Lock @entity {
 }
 
 type Release @entity {
-  id: ID!
+  id: ID! # txid-logIndex
   txid: String!
   timestamp: BigInt!
   token: String!
@@ -63,7 +54,7 @@ type Release @entity {
 }
 
 type BorrowOrder @entity {
-  id: ID!
+  id: ID! # order hash
   txid: String!
   timestamp: BigInt!
   account: String!
@@ -79,7 +70,7 @@ type BorrowOrder @entity {
 }
 
 type MarginOrder @entity {
-  id: ID!
+  id: ID! # order hash
   txid: String!
   timestamp: BigInt!
   active: Int!

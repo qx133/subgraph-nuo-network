@@ -99,14 +99,13 @@
       },
       methods: {
         submitButton: function (event) {
-          var startTime = button2.endTime - 60*60*24;
           const options = {
             method: "post",
             headers: {
               "Content-Type": "application/json"
             },
             body: JSON.stringify({
-              query:  '{start: pools(first: 1, where:{symbol:"' + button2.symbol.toUpperCase() + '", timestamp_gt: ' + startTime + '}, orderBy:timestamp, orderDirection:asc) {reserve profit loss timestamp symbol}'
+              query:  '{start: pools(first: 1, where:{symbol:"' + button2.symbol.toUpperCase() + '", timestamp_gt: ' + button2.startTime + '}, orderBy:timestamp, orderDirection:asc) {reserve profit loss timestamp symbol}'
                     + 'end: pools(first: 1, where:{symbol:"' + button2.symbol.toUpperCase() + '", timestamp_lt: ' + button2.endTime + '}, orderBy:timestamp, orderDirection:desc) {reserve profit loss timestamp symbol}}'
             })
           };

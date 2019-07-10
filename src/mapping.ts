@@ -54,15 +54,6 @@ function initPools(block: BigInt, timestamp: BigInt): void {
       pool.block = block
       pool.timestamp = timestamp
       pool.symbol = hardcodedTokens[i].symbol
-      pool.lendCreated = 0
-      pool.lendCancelled = 0
-      pool.borrowCreated = 0
-      pool.borrowRepaid = 0
-      pool.borrowDefaulted = 0
-      pool.marginCreated = 0
-      pool.marginSettled = 0
-      pool.amountDeposit = BigDecimal.fromString('0')
-      pool.amountWithdraw = BigDecimal.fromString('0')
       pool.available = BigDecimal.fromString('0')
       pool.reserve = BigDecimal.fromString('0')
       pool.active = BigDecimal.fromString('0')
@@ -76,10 +67,6 @@ function initPools(block: BigInt, timestamp: BigInt): void {
 
 function createPool(pool: Pool, latest: Pool): void {
 
-  pool.lendCreated = latest.lendCreated
-  pool.lendCancelled = latest.lendCancelled
-  pool.amountDeposit = latest.amountDeposit
-  pool.amountWithdraw = latest.amountWithdraw
   pool.available = latest.available
   pool.reserve = latest.reserve
   pool.active = latest.active
@@ -130,14 +117,12 @@ export function handleLogOrderCreated(event: LogOrderCreated): void {
 
   let tokenAmount = event.params.value.toBigDecimal().div(divisor)
 
-  pool.lendCreated++
   pool.available = pool.available.plus(tokenAmount)
   pool.reserve = pool.reserve.plus(tokenAmount)
   pool.save()
 
   latest.block = event.block.number
   latest.timestamp = event.block.timestamp
-  latest.lendCreated++
   latest.available = latest.available.plus(tokenAmount)
   latest.reserve = latest.reserve.plus(tokenAmount)
   latest.save()
