@@ -1,0 +1,142 @@
+specVersion: 0.0.1
+description: Gravatar for Ethereum
+repository: https://github.com/graphprotocol/example-subgraph
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: AccountFactory
+    network: mainnet
+    source:
+      address: '0xf5a38fbc26c720c79350b99d9c0bd42b3e9b8316'
+      abi: AccountFactory
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
+        - Global
+        - State
+      abis:
+        - name: AccountFactory
+          file: ./abis/AccountFactory.json
+      eventHandlers:
+        - event: LogAccountCreated(indexed address,indexed address,address)
+          handler: handleLogAccountCreated
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: AccountFactoryV2
+    network: mainnet
+    source:
+      address: '0x4e9d7f37eadc6fef64b5f5dccc4deb6224667677'
+      abi: AccountFactoryV2
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
+        - Global
+        - State
+      abis:
+        - name: AccountFactoryV2
+          file: ./abis/AccountFactoryV2.json
+      eventHandlers:
+        - event: LogAccountCreated(indexed address,indexed address,address)
+          handler: handleLogAccountCreatedV2
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: Reserve
+    network: mainnet
+    source:
+      address: '0x64d14595152b430cf6940da15c6e39545c7c5b7e'
+      abi: Reserve
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
+        - Global
+        - State
+      abis:
+        - name: Reserve
+          file: ./abis/Reserve.json
+      eventHandlers:
+        - event: LogOrderCreated(indexed bytes32,indexed address,indexed address,address,uint256,uint256)
+          handler: handleLogOrderCreated
+        - event: LogOrderCancelled(indexed bytes32,indexed address)
+          handler: handleLogOrderCancelled
+        - event: LogLock(indexed address,indexed address,uint256,uint256,uint256,address)
+          handler: handleLogLock
+        - event: LogRelease(indexed address,indexed address,uint256,address)
+          handler: handleLogRelease
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: Kernel
+    network: mainnet
+    source:
+      address: '0x8dc3bcbb4b506fa2becd065ff4425dee32f156a6'
+      abi: Kernel
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
+        - Global
+        - State
+      abis:
+        - name: Kernel
+          file: ./abis/Kernel.json
+      eventHandlers:
+        - event: LogOrderCreated(indexed bytes32,indexed address,indexed address,address,address,uint256,uint256,uint256,uint256,uint256)
+          handler: handleKLogOrderCreated
+        - event: LogOrderRepaid(indexed bytes32,uint256)
+          handler: handleKLogOrderRepaid
+        - event: LogOrderDefaulted(indexed bytes32,string)
+          handler: handleKLogOrderDefaulted
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: MKernel
+    network: mainnet
+    source:
+      address: '0x740f8b58f5562c8379f2a8c2230c9be5c03ac3fc'
+      abi: MKernel
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
+        - Global
+        - State
+      abis:
+        - name: MKernel
+          file: ./abis/MKernel.json
+      eventHandlers:
+        - event: LogOrderCreated(indexed bytes32,uint256,uint256)
+          handler: handleMKLogOrderCreated
+        - event: LogOrderLiquidatedByUser(indexed bytes32)
+          handler: handleMKLogOrderLiquidatedByUser
+        - event: LogOrderStoppedAtProfit(indexed bytes32)
+          handler: handleMKLogOrderStoppedAtProfit
+        - event: LogOrderDefaulted(indexed bytes32,string)
+          handler: handleMKLogOrderDefaulted
+      file: ./src/mapping.ts
+  - kind: ethereum/contract
+    name: ReserveEscrow
+    network: mainnet
+    source:
+      address: '0x802275979b020f0ec871c5ec1db6e412b72ff20b'
+      abi: ReserveEscrow
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.3
+      language: wasm/assemblyscript
+      entities:
+        - Global
+        - State
+      abis:
+        - name: ReserveEscrow
+          file: ./abis/ReserveEscrow.json
+      eventHandlers:
+        - event: LogTransfer(indexed address,indexed address,uint256)
+          handler: handleLogTransfer
+      file: ./src/mapping.ts

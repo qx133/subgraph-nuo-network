@@ -1,0 +1,86 @@
+type Account @entity {
+  id: ID!
+  txid: String!
+  timestamp: BigInt!
+  user: String!
+  account: String!
+  by: String!
+}
+
+type Pool @entity {
+  id: ID!
+  block: BigInt!
+  timestamp: BigInt!
+  symbol: String!
+  lendCreated: Int!
+  lendCancelled: Int!
+  borrowCreated: Int!
+  borrowRepaid: Int!
+  borrowDefaulted: Int!
+  marginCreated: Int!
+  marginSettled: Int!
+  amountDeposit: BigDecimal!
+  amountWithdraw: BigDecimal!
+  available: BigDecimal!
+  reserve: BigDecimal!
+  active: BigDecimal!
+  profit: BigDecimal!
+  loss: BigDecimal!
+}
+
+type LendOrder @entity {
+  id: ID!
+  txid: String!
+  timestamp: BigInt!
+  account: String!
+  token: String!
+  byUser: String!
+  value: BigDecimal!
+  expiration: BigInt!
+  active: Boolean!
+}
+
+type Lock @entity {
+  id: ID!
+  txid: String!
+  timestamp: BigInt!
+  token: String!
+  from: String!
+  value: BigDecimal!
+  profit: BigDecimal!
+  loss: BigDecimal!
+  by: String!
+}
+
+type Release @entity {
+  id: ID!
+  txid: String!
+  timestamp: BigInt!
+  token: String!
+  to: String!
+  value: BigDecimal!
+  by: String!
+}
+
+type BorrowOrder @entity {
+  id: ID!
+  txid: String!
+  timestamp: BigInt!
+  account: String!
+  principalToken: String!
+  collateralToken: String!
+  byUser: String!
+  principalAmount: BigDecimal!
+  collateralAmount: BigDecimal!
+  premium: BigDecimal!
+  expiration: BigInt!
+  fee: BigDecimal!
+  active: Int!
+}
+
+type MarginOrder @entity {
+  id: ID!
+  txid: String!
+  timestamp: BigInt!
+  active: Int!
+}

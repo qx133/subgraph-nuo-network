@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vue</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+</head>
+<body>
+  <div id="app">
+    <h1>{{ greeting }}</h1>
+  </div>
+  <div id="button-1">
+    lender address:
+    <input v-model="address" placeholder="0xbbc818f10b2bd5d4ae1a8e3717f6324acee6ec1f">
+    <button v-on:click="submitButton">submit</button>
+    <p>lend details:</p>
+    <pre>{{ lend }}</pre>
+  </div>
+  <div id="button-2">
+    symbol:
+    <input v-model="symbol" placeholder="USDC">
+    start time:
+    <input v-model="startTime" placeholder="1559347200">
+    end time:
+    <input v-model="endTime" placeholder="1561939200">
+    <button v-on:click="submitButton">submit</button>
+    <p>pool details:</p>
+    <pre>{{ pool }}</pre>
+  </div>
+  <div id="button-3">
+    symbol:
+    <input v-model="symbol" placeholder="USDC">
+    <button v-on:click="submitButton">submit</button>
+    <p>borrow details:</p>
+    <pre>{{ borrow }}</pre>
+  </div>
+
+  <script>
+    var graphurl = 'https://api.thegraph.com/subgraphs/name/qx133/nuonetwork';
+    var app = new Vue({
+      el: '#app',
+      data: {
+        greeting: 'POC of subgraph for nuo.network',
+      }
+    })
+    var button1 = new Vue({
+      el: '#button-1',
+      data: {
+        address: '0xbbc818f10b2bd5d4ae1a8e3717f6324acee6ec1f',
+        lend: '',
+      },
+      methods: {
+        submitButton: function (event) {
+          const options = {
+            method: "post",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              query: '{ lendOrders(where: {byUser: "' + button1.address.toLowerCase() + '"}) { token, active, value } }'
+            })
+          };
+
+          (async() => {
+            var res = await fetch(graphurl, options);
+            var data = await res.json();
+            var display = {
+              lendsActive: { count:0, lends: {} },
+              lendsNotActive: { count:0, lends: {} },
+            };
+            for (var n of data.data.lendOrders) {
+              if (n.active === false) {
+                display.lendsNotActive.count++;
+                if (n.token in display.lendsNotActive.lends) {
+                  display.lendsNotActive.lends[n.token] += parseFloat(n.value);
+                } else {
+                  display.lendsNotActive.lends[n.token] = parseFloat(n.value);
+                }
+              } else {
+                display.lendsActive.count++;
+                if (n.token in display.lendsActive.lends) {
+                  display.lendsActive.lends[n.token] += parseFloat(n.value);
+                } else {
+                  display.lendsActive.lends[n.token] = parseFloat(n.value);
+                }
+              }
+            }
+            button1.lend = display;
+          })()
+        }
+      }
+    })
+    var button2 = new Vue({
+      el: '#button-2',
+      data: {
+        symbol: 'USDC',
+        startTime: 1559347200,
+        endTime: 1561939200,
+        pool: '',
+      },
+      methods: {
+        submitButton: function (event) {
+          var startTime = button2.endTime - 60*60*24;
+          const options = {
+            method: "post",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              query:  '{start: pools(first: 1, where:{symbol:"' + button2.symbol.toUpperCase() + '", timestamp_gt: ' + startTime + '}, orderBy:timestamp, orderDirection:asc) {reserve profit loss timestamp symbol}'
+                    + 'end: pools(first: 1, where:{symbol:"' + button2.symbol.toUpperCase() + '", timestamp_lt: ' + button2.endTime + '}, orderBy:timestamp, orderDirection:desc) {reserve profit loss timestamp symbol}}'
+            })
+          };
+
+          (async() => {
+            var res = await fetch(graphurl, options);
+            var data = await res.json();
+            var display = {
+              start: 0,
+              end: 0,
+              token: '',
+              amount: 0,
+              profit: 0,
+              loss: 0,
+              profitNet: 0,
+              annualRate: 0
+            };
+            display.start = data.data.start[0].timestamp;
+            display.end = data.data.end[0].timestamp;
+            display.token = data.data.start[0].symbol;
+            display.amount = data.data.end[0].reserve;
+            display.profit = parseFloat(data.data.end[0].profit) - parseFloat(data.data.start[0].profit);
+            display.loss = parseFloat(data.data.end[0].loss) - parseFloat(data.data.start[0].loss);
+            display.profitNet = display.profit - display.loss;
+            display.annualRate = display.profitNet / display.amount / (display.end-display.start) * 60*60*24*365*100
+            button2.pool = display;
+          })()
+        }
+      }
+    })
+    var button3 = new Vue({
+      el: '#button-3',
+      data: {
+        symbol: 'USDC',
+        borrow: '',
+      },
+      methods: {
+        submitButton: function (event) {
+          const options = {
+            method: "post",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              query: '{ borrowOrders(where: {principalToken: "' + button3.symbol.toUpperCase() + '", active: 1 }, orderBy:timestamp, orderDirection:desc) { principalToken, principalAmount, collateralToken, collateralAmount } }'
+            })
+          };
+
+          (async() => {
+            var res = await fetch(graphurl, options);
+            var data = await res.json();
+            var display = {
+              count: 0,
+              principalToken: '',
+              principalAmount: 0,
+              collateral: {}
+            };
+            for (var n of data.data.borrowOrders) {
+              display.count++;
+              display.principalToken = n.principalToken;
+              display.principalAmount += parseFloat(n.principalAmount);
+              if (n.collateralToken in display.collateral) {
+                display.collateral[n.collateralToken] += parseFloat(n.collateralAmount);
+              } else {
+                display.collateral[n.collateralToken] = parseFloat(n.collateralAmount);
+              }
+            }
+            button3.borrow = display;
+          })()
+        }
+      }
+    })
+
+
+  </script>
+</body>
+</html>
